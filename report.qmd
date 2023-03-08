@@ -1,0 +1,78 @@
+---
+title: Algorithmic Fairness
+subtitle: Responsible AI Special Course @ DTU
+author:
+    - name: Oliver Sande
+    - name: David Hartel
+    - name: Benjamin Starostka
+format:
+    pdf:
+        fig-pos: 'h'
+---
+
+# Data investigation and preparation
+For the data preparation we apply one-hot encoding for non numeric variables.
+And split the dataset into its test, train and validation sets respectively.
+
+<!-- TODO: code for preprocessing -->
+```{python}
+# TODO
+```
+
+<!-- TODO: plot summary info and distributions for sex and origin -->
+```{python}
+# TODO
+```
+
+# Designing a fairness criterion
+
+We start by specifying a decision tree classifier as the model of interest 
+and continue the investigation into the 3 definitions of fairness, namely: independence, separation and sufficiency.
+
+<!-- TODO: tabulate the variables, groups comparison and model results -->
+For the diagnostic tests we consider 3 main groups with the following set of attributes:
+- Sex: V1_sex_female', V1_sex_male
+- Origin: V4_area_origin_Europe, V4_area_origin_Latin America, V4_area_origin_Maghreb, V4_area_origin_Other
+- Age: V8_age_14, V8_age_15, V8_age_16, V8_age_17 
+
+<!-- TODO: tabulate the fairness test results for all experiments -->
+We continue to tabulate the computed results for the various tests below.
+```{python}
+#| label: tbl-diagnostics-independance
+#| tbl-cap: Diagnostics for independance
+from IPython.display import Markdown
+from tabulate import tabulate
+table = [
+    ['TODO: Group A', 'TODO: Group B'],
+    ['TODO: Group A', 'TODO: Group B'],
+    ['TODO: Group A', 'TODO: Group B'],
+    ['TODO: Group A', 'TODO: Group B'],
+]
+Markdown(tabulate(
+    table, headers=['group a', 'group b',]
+))
+```
+
+```{python}
+#| label: tbl-diagnostics-separation
+#| tbl-cap: Diagnostics for separation
+from IPython.display import Markdown
+from tabulate import tabulate
+table = [
+    ['TODO: Group A', 'TODO: Group B'],
+    ['TODO: Group A', 'TODO: Group B'],
+    ['TODO: Group A', 'TODO: Group B'],
+    ['TODO: Group A', 'TODO: Group B'],
+]
+Markdown(tabulate(
+    table, headers=['group a', 'group b',]
+))
+```
+
+<!-- TODO: investigate the ROC curve -->
+
+<!-- TODO: formulate the criteria based on findings -->
+
+# Mitigating model bias
+
+# Redoing the diagnostic analysis
