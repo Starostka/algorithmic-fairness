@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "algorithmic-fairness"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "sandbox"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pillow = "^9.4.0"
+matplotlib = "^3.7.0"
+numpy = "^1.24.2"
+polars = "^0.16.11"
+scikit-learn = "^1.2.1"
+
+[tool.poetry.group.dev.dependencies]
+ipython = "^8.10.0"
+black = "^23.1.0"
+pre-commit = "^3.1.1"
+nbdev = "^2.3.12"
+
+[tool.black]
+line-length = 88
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
