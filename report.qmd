@@ -22,7 +22,7 @@ from tabulate import tabulate
 ```
 
 # Data investigation and preparation
-For the data preparation we apply one-hot encoding for non numeric variables and split the dataset into its test, train and validation sets respectively.
+For the data preparation we first transform the non numeric variables using one-hot encoding. Then we split the dataset into its test, train and validation sets respectively.
 ```{python}
 data = pd.read_csv('data/catalan-juvenile-recidivism-subset.csv')
 data = pd.get_dummies(df, columns=[col for col in df.columns if df[col].dtype == "object"])
