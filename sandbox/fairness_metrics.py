@@ -30,7 +30,7 @@ def test_independence(model, X, a, b) -> bool:
         print("The model does not fulfill independence")
     return proposition
 
-def test_seperation(model, X, y, a, b) -> bool:
+def test_separation(model, X, y, a, b) -> bool:
     # y is the target variable
     # X is the feature matrix
     # a is the column for the first group
