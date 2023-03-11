@@ -14,15 +14,16 @@ data = pl.read_csv("data/catalan-juvenile-recidivism-subset.csv")
 
 # one-hot encode string columns
 data = data.to_dummies(columns=data.select(pl.col(pl.Utf8)).columns)
-
 # post-process feature map
 Features = Enum("Features", data.columns)
 
+# data splitting: shuffle then split
 train, validate, test = np.split(
-    data.sample(frac=1, seed=123).to_numpy(),  # shuffle the dataset
-    [int(0.6 * len(data)), int(0.8 * len(data))],  # split into 3 parts
+    data.sample(frac=1, seed=123).to_numpy(),
+    [int(0.6 * len(data)), int(0.8 * len(data))],
 )
 
+# specify in/+dependant variables and model
 X_train = train[:, data.columns != "V115_RECID2015_recid"].squeeze()
 y_train = train[:, Features.V115_RECID2015_recid.value]
 X_test = test[:, data.columns != "V115_RECID2015_recid"].squeeze()
@@ -33,9 +34,24 @@ classifier.fit(X_train, y_train)
 predictions = classifier.predict(X_test)
 classifier.predict_proba
 
-test_independence(classifier, X_test, "V1_sex_male", "V1_sex_female")
-test_seperation(classifier, X_test, y_test, "V1_sex_male", "V1_sex_female")
-test_sufficiency(classifier, X_test, y_test, "V1_sex_male", "V1_sex_female")
+# trials of diagnostic
+trials = [
+    ("V1_sex_male", "V1_sex_female"),
+    ('V8_age_14', 'V8_age_15'),
+    ('V8_age_16', 'V8_age_17'),
+    ('V4_area_origin_Europe', 'V4_area_origin_Latin America'),
+    ('V4_area_origin_Maghreb', 'V4_area_origin_Other'),
+]
+
+independence = map(lambda trial: test_independence(classifier, X_test, *trial), trials)
+separation = map(lambda trial: test_seperation(classifier, X_test, y_test, *trial), trials)
+
+list(independence)
+list(separation)
+
+# test_independence(classifier, X_test, "V1_sex_male", "V1_sex_female")
+# test_seperation(classifier, X_test, y_test, "V1_sex_male", "V1_sex_female")
+# test_sufficiency(classifier, X_test, y_test, "V1_sex_male", "V1_sex_female")
 
 # TODO: generalize fairness evaluation
 # @dataclass
