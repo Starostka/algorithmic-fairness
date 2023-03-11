@@ -10,13 +10,35 @@ format:
         fig-pos: 'h'
 ---
 
-# Data investigation and preparation
-For the data preparation we apply one-hot encoding for non numeric variables.
-And split the dataset into its test, train and validation sets respectively.
-
-<!-- TODO: code for preprocessing -->
 ```{python}
-# TODO
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from IPython.display import Markdown
+from sklearn.ensemble import RandomForestClassifier
+from sklearn import metrics
+from functools import partial
+from tabulate import tabulate
+```
+
+# Data investigation and preparation
+For the data preparation we apply one-hot encoding for non numeric variables and split the dataset into its test, train and validation sets respectively.
+```{python}
+data = pd.read_csv('data/catalan-juvenile-recidivism-subset.csv')
+data = pd.get_dummies(df, columns=[col for col in df.columns if df[col].dtype == "object"])
+
+X = data.drop(columns=["V115_RECID2015_recid", "id"])
+y = data.V115_RECID2015_recid
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1, stratify=y)
+```
+
+```{python}
+classifier = RandomForestClassifier() 
+classifier = classifier.fit(X_train,y_train)
+y_pred = classifier.predict(X_test)
+
+Markdown(f"Accuracy: {metrics.accuracy_score(y_test, y_pred)}")
 ```
 
 <!-- TODO: plot summary info and distributions for sex and origin -->
@@ -33,43 +55,50 @@ and continue the investigation into the 3 definitions of fairness, namely: indep
 For the diagnostic tests we consider 3 main groups with the following set of attributes:
 - Sex: V1_sex_female', V1_sex_male
 - Origin: V4_area_origin_Europe, V4_area_origin_Latin America, V4_area_origin_Maghreb, V4_area_origin_Other
-- Age: V8_age_14, V8_age_15, V8_age_16, V8_age_17 
+- Age: V8_age_14, V8_age_15, V8_age_16, V8_age_17
+
+```{python}
+# define diagnostic system
+independence = partial(test_independence, classifier, X)
+separation = partial(test_separation, X, y)
+
+combinations = [
+    ('V1_sex_male', 'V1_sex_female'),
+    ('V8_age_14', 'V8_age_15'),
+    ('V8_age_16', 'V8_age_17'),
+    ('V4_area_origin_Europe', 'V4_area_origin_Latin America'),
+    ('V4_area_origin_Maghreb', 'V4_area_origin_Other')
+]
+
+# evaluate system chains
+result_a = map(independence, combinations)
+result_b = map(separation, combinations)
+```
 
 <!-- TODO: tabulate the fairness test results for all experiments -->
 We continue to tabulate the computed results for the various tests below.
 ```{python}
 #| label: tbl-diagnostics-independance
 #| tbl-cap: Diagnostics for independance
-from IPython.display import Markdown
-from tabulate import tabulate
-table = [
-    ['TODO: Group A', 'TODO: Group B'],
-    ['TODO: Group A', 'TODO: Group B'],
-    ['TODO: Group A', 'TODO: Group B'],
-    ['TODO: Group A', 'TODO: Group B'],
-]
+table = np.array(combinations, result_a)
 Markdown(tabulate(
-    table, headers=['group a', 'group b',]
+    table, headers=['group a', 'group b', 'independance']
 ))
 ```
 
 ```{python}
 #| label: tbl-diagnostics-separation
 #| tbl-cap: Diagnostics for separation
-from IPython.display import Markdown
-from tabulate import tabulate
-table = [
-    ['TODO: Group A', 'TODO: Group B'],
-    ['TODO: Group A', 'TODO: Group B'],
-    ['TODO: Group A', 'TODO: Group B'],
-    ['TODO: Group A', 'TODO: Group B'],
-]
+table = np.array(combinations, result_b)
 Markdown(tabulate(
-    table, headers=['group a', 'group b',]
+    table, headers=['group a', 'group b', 'separation']
 ))
 ```
 
 <!-- TODO: investigate the ROC curve -->
+```{python}
+
+```
 
 <!-- TODO: formulate the criteria based on findings -->
 
